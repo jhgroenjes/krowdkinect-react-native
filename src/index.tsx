@@ -6,7 +6,7 @@ const LINKING_ERROR =
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo Go\n';
 
-const KrowdkinectReactNative = NativeModules.KrowdkinectReactNative
+const { KrowdkinectReactNative } = NativeModules
   ? NativeModules.KrowdkinectReactNative
   : new Proxy(
       {},
@@ -17,6 +17,22 @@ const KrowdkinectReactNative = NativeModules.KrowdkinectReactNative
       }
     );
 
-export function multiply(a: number, b: number): Promise<number> {
-  return KrowdkinectReactNative.multiply(a, b);
+//type KKOptions = {
+//  apiKey: string;
+//  deviceID?: number;
+//  displayName?: string;
+//  displayTagline?: string;
+//  homeAwayHide?: boolean;
+//  seatNumberEditHide?: boolean;
+//  homeAwaySelection?: string;
+//};
+
+//export function launchKrowdKinect(options: KKOptions): void {
+export function launchKrowdKinect(): void {
+  if (KrowdkinectReactNative) {
+    //KrowdkinectReactNative.launch(options);
+    KrowdkinectReactNative.launch();
+  } else {
+    console.warn('KrowdkinectReactNative is not available.');
+  }
 }

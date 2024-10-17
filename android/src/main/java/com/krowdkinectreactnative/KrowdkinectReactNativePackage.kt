@@ -8,7 +8,7 @@ import com.facebook.react.uimanager.ViewManager
 
 class KrowdkinectReactNativePackage : ReactPackage {
   override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
-    return listOf(KrowdkinectReactNativeModule(reactContext))
+    return listOf(KrowdkinectReactNative(reactContext))
   }
 
   override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
