@@ -34,7 +34,8 @@ class KrowdkinectReactNative(reactContext: ReactApplicationContext) :
               //  val kkOptions = KKOptions(
                 
                 val apiKey = options.getString("apiKey") ?: throw IllegalArgumentException("API Key is required")
-                val deviceID = options.getInt("deviceID")
+                val deviceIDInt = options.getInt("deviceID")
+                val deviceID = deviceIDInt.toUInt() // Convert to UInt
                 val displayName = options.getString("displayName") ?: "Default Name"
                 val displayTagline = options.getString("displayTagline") ?: "Default Tagline"
                 val homeAwayHide = options.getBoolean("homeAwayHide")

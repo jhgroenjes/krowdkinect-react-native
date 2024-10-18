@@ -1,6 +1,6 @@
 {
   "name": "krowdkinect-react-native",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "React Native dual-platform module for KrowdKinect",
   "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.js",
