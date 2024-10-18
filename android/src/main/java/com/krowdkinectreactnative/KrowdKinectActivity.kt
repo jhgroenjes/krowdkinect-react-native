@@ -2,13 +2,7 @@
 
 package com.krowdkinectreactnative
 
-
-
-
 import android.view.Gravity
-
-
-
 import android.app.Activity
 import android.app.AlertDialog
 import android.os.Bundle
@@ -33,7 +27,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
-//import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import io.ably.lib.realtime.*
 import io.ably.lib.types.*
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -88,17 +82,6 @@ var pixelArray = UShortArray(9)  //  <-- Defined down below in that section beca
 var featuresArray = UByteArray(14)
 //var colorArray = set below because of variable size based on received packet.   Ui84rg.53iies:replacewithyourkey
 
-//Old Default Var set section
-//  Set by the Host App in the SDK version, but these are the DEFAULTS
-//var ablyKey = "Hf22Ud.5U32zw:vnbLv44ureyfhgr0Sgwb2ECgFCSXHAXQomrJOvwp-qk"  // error checking using a proper format, future
-//var deviceID: UInt = 10u
-//var displayName = "test"
-//var displayTagline = "test A"
-//var homeAwayHide = false
-//var seatNumberEditHide = false
-//var homeAwaySelection = "Home"
-
-
 //Android Specific variables for KrowdKinect (not used in Xcode implementation)
 var isFlashOn: Boolean = false
 private val handler = Handler(Looper.myLooper()!!)
@@ -117,12 +100,8 @@ class KrowdKinectActivity : Activity() {
     //audio player init.
     private var mediaPlayer: MediaPlayer? = null
 
-
-
-
-
     private lateinit var apiKey: String
-        private var deviceID: Int = 1
+        private var deviceID: UInt = 1u
         private lateinit var displayName: String
         private lateinit var displayTagline: String
         private var homeAwayHide: Boolean = true
@@ -162,67 +141,19 @@ class KrowdKinectActivity : Activity() {
         }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_krowdkinect)
 
-
-
-
- // Retrieve KKOptions from the intent directly
-        apiKey = intent.getStringExtra(API_KEY) ?: "Hf22Ud.5U32zw:vnbLv44ureyfhgr0Sgwb2ECgFCSXHAXQomrJOvwp-qk"
-        deviceID = intent.getIntExtra(DEVICE_ID, 1)
+        // Retrieve KKOptions from the intent directly
+        apiKey = intent.getStringExtra(API_KEY) ?: "Hf22Ud.5U32zw:vnbLv44ureyfhgr0Sgwb2ECgFCSXHAXQomrJOvwp-qk" // default key
+        deviceID = intent.getIntExtra(DEVICE_ID, 1).toUInt()   // get to UInt type for rest of code.
         displayName = intent.getStringExtra(DISPLAY_NAME) ?: ""
         displayTagline = intent.getStringExtra(DISPLAY_TAGLINE) ?: ""
         homeAwayHide = intent.getBooleanExtra(HOME_AWAY_HIDE, true)
         seatNumberEditHide = intent.getBooleanExtra(SEAT_NUMBER_EDIT_HIDE, true)
         homeAwaySelection = intent.getStringExtra(HOME_AWAY_SELECTION) ?: "All"
-
-
-
-
-
-
-
-//old way of getting KKOptions below.
-        // Retrieve KKOptions from the intent and update from Defaults if needed
-        //val apiKey = intent.getStringExtra("apiKey") ?: ablyKey // Use default if not found.
-        // set the deviceID from the intent
-        //deviceID = intent.getIntExtra("deviceID", 1).toUInt()
-        //if (intent.getStringExtra("displayName") != displayName) {
-        //    displayName = intent.getStringExtra("displayName").toString()
-       // }
-       // if (intent.getStringExtra("displayTagline") != displayTagline) {
-       //     displayTagline = intent.getStringExtra("displayTagline").toString()
-       // }
-       // if (intent.getBooleanExtra("homeAwayHide", true) != homeAwayHide) {
-       //     homeAwayHide = intent.getBooleanExtra("homeAwayHide", true)
-       // }
-       // if (intent.getBooleanExtra("seatNumberEditHide", true) != seatNumberEditHide) {
-       //     seatNumberEditHide = intent.getBooleanExtra("seatNumberEditHide", true)
-       // }
-       // if (intent.getStringExtra("homeAwaySelection") != homeAwaySelection) {
-       //     homeAwaySelection = intent.getStringExtra("homeAwaySelection").toString()
-       // }
-// end old way
-
-
-
-
-
 
         // Initialize AblyRealtime with the updated ablyKey
             options = ClientOptions(apiKey)
@@ -235,7 +166,6 @@ class KrowdKinectActivity : Activity() {
          exitButton.setOnClickListener {
              showExitConfirmationDialog()
          }
-
 
         //  code to initialize the camera manager and set the torch ID needed for candle mode
         cameraManager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
