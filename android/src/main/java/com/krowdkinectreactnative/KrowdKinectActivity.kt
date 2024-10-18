@@ -12,6 +12,8 @@ import android.view.Gravity
 import android.app.Activity
 import android.app.AlertDialog
 import android.os.Bundle
+import android.content.Intent
+import android.util.Log
 import android.widget.TextView
 import android.content.Context
 import android.content.DialogInterface
@@ -86,14 +88,16 @@ var pixelArray = UShortArray(9)  //  <-- Defined down below in that section beca
 var featuresArray = UByteArray(14)
 //var colorArray = set below because of variable size based on received packet.   Ui84rg.53iies:replacewithyourkey
 
+//Old Default Var set section
 //  Set by the Host App in the SDK version, but these are the DEFAULTS
-var ablyKey = "Hf22Ud.5U32zw:vnbLv44ureyfhgr0Sgwb2ECgFCSXHAXQomrJOvwp-qk"  // error checking using a proper format, future
-var deviceID: UInt = 10u
-var displayName = "test"
-var displayTagline = "test A"
-var homeAwayHide = false
-var seatNumberEditHide = false
-var homeAwaySelection = "Home"
+//var ablyKey = "Hf22Ud.5U32zw:vnbLv44ureyfhgr0Sgwb2ECgFCSXHAXQomrJOvwp-qk"  // error checking using a proper format, future
+//var deviceID: UInt = 10u
+//var displayName = "test"
+//var displayTagline = "test A"
+//var homeAwayHide = false
+//var seatNumberEditHide = false
+//var homeAwaySelection = "Home"
+
 
 //Android Specific variables for KrowdKinect (not used in Xcode implementation)
 var isFlashOn: Boolean = false
@@ -113,37 +117,118 @@ class KrowdKinectActivity : Activity() {
     //audio player init.
     private var mediaPlayer: MediaPlayer? = null
 
+
+
+
+
+    private lateinit var apiKey: String
+        private var deviceID: Int = 1
+        private lateinit var displayName: String
+        private lateinit var displayTagline: String
+        private var homeAwayHide: Boolean = true
+        private var seatNumberEditHide: Boolean = true
+        private lateinit var homeAwaySelection: String
+
+        companion object {
+            private const val API_KEY = "apiKey"
+            private const val DEVICE_ID = "deviceID"
+            private const val DISPLAY_NAME = "displayName"
+            private const val DISPLAY_TAGLINE = "displayTagline"
+            private const val HOME_AWAY_HIDE = "homeAwayHide"
+            private const val SEAT_NUMBER_EDIT_HIDE = "seatNumberEditHide"
+            private const val HOME_AWAY_SELECTION = "homeAwaySelection"
+
+            fun start(
+                context: Context,
+                apiKey: String,
+                deviceID: Int,
+                displayName: String,
+                displayTagline: String,
+                homeAwayHide: Boolean,
+                seatNumberEditHide: Boolean,
+                homeAwaySelection: String
+            ) {
+                val intent = Intent(context, KrowdKinectActivity::class.java).apply {
+                    putExtra(API_KEY, apiKey)
+                    putExtra(DEVICE_ID, deviceID)
+                    putExtra(DISPLAY_NAME, displayName)
+                    putExtra(DISPLAY_TAGLINE, displayTagline)
+                    putExtra(HOME_AWAY_HIDE, homeAwayHide)
+                    putExtra(SEAT_NUMBER_EDIT_HIDE, seatNumberEditHide)
+                    putExtra(HOME_AWAY_SELECTION, homeAwaySelection)
+                }
+                context.startActivity(intent)
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_krowdkinect)
 
+
+
+
+ // Retrieve KKOptions from the intent directly
+        apiKey = intent.getStringExtra(API_KEY) ?: "Hf22Ud.5U32zw:vnbLv44ureyfhgr0Sgwb2ECgFCSXHAXQomrJOvwp-qk"
+        deviceID = intent.getIntExtra(DEVICE_ID, 1)
+        displayName = intent.getStringExtra(DISPLAY_NAME) ?: ""
+        displayTagline = intent.getStringExtra(DISPLAY_TAGLINE) ?: ""
+        homeAwayHide = intent.getBooleanExtra(HOME_AWAY_HIDE, true)
+        seatNumberEditHide = intent.getBooleanExtra(SEAT_NUMBER_EDIT_HIDE, true)
+        homeAwaySelection = intent.getStringExtra(HOME_AWAY_SELECTION) ?: "All"
+
+
+
+
+
+
+
+//old way of getting KKOptions below.
         // Retrieve KKOptions from the intent and update from Defaults if needed
-        val apiKey = intent.getStringExtra("apiKey") ?: ablyKey // Use default if not found
+        //val apiKey = intent.getStringExtra("apiKey") ?: ablyKey // Use default if not found.
+        // set the deviceID from the intent
+        //deviceID = intent.getIntExtra("deviceID", 1).toUInt()
+        //if (intent.getStringExtra("displayName") != displayName) {
+        //    displayName = intent.getStringExtra("displayName").toString()
+       // }
+       // if (intent.getStringExtra("displayTagline") != displayTagline) {
+       //     displayTagline = intent.getStringExtra("displayTagline").toString()
+       // }
+       // if (intent.getBooleanExtra("homeAwayHide", true) != homeAwayHide) {
+       //     homeAwayHide = intent.getBooleanExtra("homeAwayHide", true)
+       // }
+       // if (intent.getBooleanExtra("seatNumberEditHide", true) != seatNumberEditHide) {
+       //     seatNumberEditHide = intent.getBooleanExtra("seatNumberEditHide", true)
+       // }
+       // if (intent.getStringExtra("homeAwaySelection") != homeAwaySelection) {
+       //     homeAwaySelection = intent.getStringExtra("homeAwaySelection").toString()
+       // }
+// end old way
+
+
+
+
+
 
         // Initialize AblyRealtime with the updated ablyKey
-        options = ClientOptions(apiKey)
-        ably = AblyRealtime(options)
-        channel = ably.channels.get("KrowdKinect")
+            options = ClientOptions(apiKey)
+            ably = AblyRealtime(options)
+            channel = ably.channels.get("KrowdKinect")
 
-        // set the deviceID from the intent
-        deviceID = intent.getIntExtra("deviceID", 1).toUInt()
-
-        if (intent.getStringExtra("displayName") != displayName) {
-            displayName = intent.getStringExtra("displayName").toString()
-        }
-        if (intent.getStringExtra("displayTagline") != displayTagline) {
-            displayTagline = intent.getStringExtra("displayTagline").toString()
-        }
-        if (intent.getBooleanExtra("homeAwayHide", true) != homeAwayHide) {
-            homeAwayHide = intent.getBooleanExtra("homeAwayHide", true)
-        }
-        if (intent.getBooleanExtra("seatNumberEditHide", true) != seatNumberEditHide) {
-            seatNumberEditHide = intent.getBooleanExtra("seatNumberEditHide", true)
-        }
-        if (intent.getStringExtra("homeAwaySelection") != homeAwaySelection) {
-            homeAwaySelection = intent.getStringExtra("homeAwaySelection").toString()
-        }
 
         // Handle the "X" button to close the screen
          val exitButton: ImageView = findViewById(R.id.exitButton)
