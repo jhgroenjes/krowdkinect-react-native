@@ -10,9 +10,9 @@ Pod::Spec.new do |s|
   s.homepage     = package["homepage"]
   s.license      = package["license"]
   s.authors      = package["author"]
-  s.platforms    = { :ios => "14.0" } 
+  # MinIOS is 14.0 for KrowdKinect.
+  s.platforms    = { :ios => "14.0" }  
   s.source       = { :git => "https://github.com/jhgroenjes/krowdkinect-react-native.git", :tag => "#{s.version}" }
-
   s.source_files = "ios/**/*.{h,m,mm,swift}"
 
   # Use install_modules_dependencies helper to install the dependencies if React Native version >=0.71.0.
@@ -21,33 +21,19 @@ Pod::Spec.new do |s|
     install_modules_dependencies(s)
   else
     s.dependency "React-Core"
-
-    # Don't install the dependencies when we run `pod install` in the old architecture.
-   # if ENV['RCT_NEW_ARCH_ENABLED'] == '1' then
-   #   s.compiler_flags = folly_compiler_flags + " -DRCT_NEW_ARCH_ENABLED=1"
-   #   s.pod_target_xcconfig    = {
-   #       "HEADER_SEARCH_PATHS" => "\"$(PODS_ROOT)/boost\"",
-   #       "OTHER_CPLUSPLUSFLAGS" => "-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1",
-   #       "CLANG_CXX_LANGUAGE_STANDARD" => "c++17"
-   #   }
-   #   s.dependency "React-Codegen"
-   #   s.dependency "RCT-Folly"
-   #   s.dependency "RCTRequired"
-   #   s.dependency "RCTTypeSafety"
-   #   s.dependency "ReactCommon/turbomodule/core"
-   # end
+     # Don't install the dependencies when we run `pod install` in the old architecture.
+     # if ENV['RCT_NEW_ARCH_ENABLED'] == '1' then
+     #   s.compiler_flags = folly_compiler_flags + " -DRCT_NEW_ARCH_ENABLED=1"
+     #   s.pod_target_xcconfig    = {
+     #       "HEADER_SEARCH_PATHS" => "\"$(PODS_ROOT)/boost\"",
+     #       "OTHER_CPLUSPLUSFLAGS" => "-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1",
+     #       "CLANG_CXX_LANGUAGE_STANDARD" => "c++17"
+     #   }
+     #   s.dependency "React-Codegen"
+     #   s.dependency "RCT-Folly"
+     #   s.dependency "RCTRequired"
+     #   s.dependency "RCTTypeSafety"
+     #   s.dependency "ReactCommon/turbomodule/core"
+     # end
   end
-
-  post_install do |installer|
-    react_native_post_install(installer)
-    
-    # Fixes to address build issues, especially with arm64 architecture
-    installer.pods_project.targets.each do |target|
-      target.build_configurations.each do |config|
-        config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
-        config.build_settings['CLANG_ENABLE_MODULES'] = 'YES'
-      end
-    end
-  end
-
 end
