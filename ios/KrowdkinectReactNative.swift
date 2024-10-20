@@ -18,11 +18,11 @@ class KrowdkinectReactNative: NSObject {
             return
         }
       
-         // Convert to KKOptions Object
-        let kkOptions = KKOptions(apiKey: apiKey, deviceID: deviceID, displayName: displayName,
+        let kkOptions = KKOptions(apiKey: apiKey, deviceID: UInt32(deviceID), displayName: displayName,
                                   displayTagline: displayTagline, homeAwayHide: homeAwayHide,
                                   seatNumberEditHide: seatNumberEditHide, homeAwaySelection: homeAwaySelection)
-        
+
+                                  
         //DispatchQueue.main.async {
         //    let alert = UIAlertController(title: "KKOptions", message: """
         //        API Key: \(apiKey)

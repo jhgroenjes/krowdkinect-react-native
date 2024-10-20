@@ -27,8 +27,7 @@ const { KrowdkinectReactNative } = NativeModules
         },
       }
     );
-
-
+    
 export function launchKrowdKinect(options: KKOptions): void {
   if (KrowdkinectReactNative) {
     KrowdkinectReactNative.launch(options);
